@@ -92,9 +92,4 @@
         <param-value>com.rvkb.rfs.facets</param-value>
     </context-param>
 
-    <context-param>
-        <param-name>rfs.shared.dir</param-name>
-        <param-value></param-value>
-    </context-param>
-
 </web-app>

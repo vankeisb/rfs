@@ -38,8 +38,8 @@ class FileSystemObserver {
         this
     }
 
-    private def createEntry(File f) {
-        return new Entry(file: f,lastModified: f.lastModified())
+    private FsEntry createEntry(File f) {
+        return new FsEntry(file: f,lastModified: f.lastModified())
     }
 
     void stop() {
