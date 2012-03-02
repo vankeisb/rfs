@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne
 import javax.persistence.FetchType
 
 @Entity
-class Download {
+class FileTransfer {
 
     @Id
     @GeneratedValue
@@ -20,6 +20,8 @@ class Download {
     @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
     User buddy
+
+    Boolean download
 
     Date startedOn
 

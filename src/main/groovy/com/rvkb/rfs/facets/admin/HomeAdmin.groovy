@@ -9,7 +9,8 @@ import net.sourceforge.stripes.action.ForwardResolution
 import net.sourceforge.stripes.action.RedirectResolution
 import net.sourceforge.stripes.action.Resolution
 import woko.facets.builtin.all.HomeImpl
-import com.rvkb.rfs.model.Download
+
+import com.rvkb.rfs.model.FileTransfer
 
 @FacetKey(name="home", profileId="admin")
 @Mixin(FacetCategory)
@@ -40,7 +41,7 @@ class HomeAdmin extends HomeImpl {
         return store.buddies
     }
 
-    List<Download> getLastDownloads() {
+    List<FileTransfer> getLastDownloads() {
         return store.lastDownloads
     }
 

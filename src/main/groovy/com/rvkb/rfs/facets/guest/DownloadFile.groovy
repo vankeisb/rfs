@@ -8,10 +8,12 @@ import net.sourceforge.stripes.action.ActionBeanContext
 import com.rvkb.rfs.facets.FacetCategory
 import net.sourceforge.stripes.action.StreamingResolution
 import net.sourceforge.stripes.action.ErrorResolution
+import com.rvkb.rfs.util.DownloadResolution
+import com.rvkb.rfs.model.FileTransfer
 
 @FacetKey(name="download", profileId="guest", targetObjectType=File.class)
 @Mixin(FacetCategory)
-class DownloadFileImpl extends BaseResolutionFacet {
+class DownloadFile extends BaseResolutionFacet {
 
     Resolution getResolution(ActionBeanContext abc) {
         def fullPath = rfsConfig.baseDir
@@ -26,17 +28,27 @@ class DownloadFileImpl extends BaseResolutionFacet {
         fullPath += path
         String fileName = path
         int i = fileName.lastIndexOf("/")
-        if (i!=-1) {
-            fileName = path[i+1..-1]
-        }
         def localFile = new java.io.File(fullPath)
         if (!localFile.exists()) {
             // TODO cleanup ? file should not exist in the db...
             return new ErrorResolution(404)
         }
-        return new StreamingResolution("rfsfile", new FileInputStream(fullPath)).
-          setFilename(fileName).
-          setRangeSupport(true)
+        FileTransfer ft = null
+        return new DownloadResolution(localFile).
+            onStart {
+                ft = new FileTransfer(download: false, buddy: currentUser, startedOn: new Date(), relativePath: f.path)
+                store.save(ft)
+            }.
+            onFinish {
+                ft.finishedOn = new Date()
+                store.save(ft)
+            }.
+            onError { e ->
+                ft.finishedOn = new Date()
+                store.save(ft)
+                println "ERROR !"
+                e.printStackTrace()
+            }
     }
 
 

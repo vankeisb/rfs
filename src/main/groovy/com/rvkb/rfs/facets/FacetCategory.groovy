@@ -6,9 +6,19 @@ import com.rvkb.rfs.model.Config
 import javax.servlet.http.HttpServletRequest
 import com.rvkb.rfs.Rfs
 import com.rvkb.rfs.RfsInitListener
+import com.rvkb.rfs.model.User
+import woko.ext.usermanagement.core.DatabaseUserManager
+import woko.Woko
 
 @Category(BaseFacet.class)
 class FacetCategory {
+
+    User getCurrentUser() {
+        Woko woko = facetContext.woko
+        DatabaseUserManager um = woko.userManager
+        String userName = woko.getUsername(facetContext.request)
+        return um.getUserByUsername(userName)
+    }
 
     boolean checkLocalhost() {
         InetAddress addr = InetAddress.getByName(facetContext.request.remoteAddr)

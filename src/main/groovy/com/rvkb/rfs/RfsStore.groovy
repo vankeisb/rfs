@@ -6,7 +6,7 @@ import com.rvkb.rfs.model.Config
 import org.hibernate.criterion.Order
 import org.hibernate.criterion.Restrictions
 import com.rvkb.rfs.model.User
-import com.rvkb.rfs.model.Download
+import com.rvkb.rfs.model.FileTransfer
 
 class RfsStore extends HibernateCompassStore {
 
@@ -65,8 +65,8 @@ class RfsStore extends HibernateCompassStore {
         session.createCriteria(User.class).add(Restrictions.eq("username", username)).uniqueResult()
     }
 
-    List<Download> getLastDownloads() {
-        session.createCriteria(Download.class).setMaxResults(10).list()
+    List<FileTransfer> getLastDownloads() {
+        session.createCriteria(FileTransfer.class).setMaxResults(10).list()
     }
 
 }

@@ -9,7 +9,7 @@ import org.apache.http.client.ResponseHandler
 import woko.hibernate.TxCallbackWithResult
 import com.rvkb.rfs.model.Config
 import woko.hibernate.TxCallback
-import com.rvkb.rfs.model.Download
+import com.rvkb.rfs.model.FileTransfer
 import org.hibernate.Session
 
 class DownloadManager {
@@ -37,9 +37,9 @@ class DownloadManager {
 
             println "*** Downloading : $url to $targetFile"
 
-            Download d
+            FileTransfer d
             store.doInTx({ st, session ->
-                d = new Download(buddy: buddy, relativePath: relativePath, startedOn: new Date())
+                d = new FileTransfer(buddy: buddy, relativePath: relativePath, startedOn: new Date(), download: true)
                 store.save(d)
             } as TxCallback)
 
@@ -53,7 +53,7 @@ class DownloadManager {
                 } as ResponseHandler)
             } finally {
                 store.doInTx({ st, Session session ->
-                    d = session.load(Download.class, d.id)
+                    d = session.load(FileTransfer.class, d.id)
                     d.finishedOn = new Date()
                     store.save(d)
                 } as TxCallback)
