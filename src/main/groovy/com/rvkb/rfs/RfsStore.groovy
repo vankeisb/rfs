@@ -2,10 +2,11 @@ package com.rvkb.rfs
 
 import woko.hbcompass.HibernateCompassStore
 import com.rvkb.rfs.model.Config
-import com.rvkb.rfs.model.Buddy
+
 import org.hibernate.criterion.Order
 import com.rvkb.rfs.model.File
 import org.hibernate.criterion.Restrictions
+import com.rvkb.rfs.model.User
 
 class RfsStore extends HibernateCompassStore {
 
@@ -43,9 +44,10 @@ class RfsStore extends HibernateCompassStore {
         session.delete("select f from com.rvkb.rfs.model.File as f where path = '$absolutePath'")
     }
 
-    List<Buddy> getBuddies() {
-        return session.createCriteria(Buddy.class).
-          addOrder(Order.asc("name")).
+    List<User> getBuddies() {
+        return session.createCriteria(User.class).
+          addOrder(Order.asc("username")).
+          add(Restrictions.in("roles", "buddy")).
           list()
     }
 
