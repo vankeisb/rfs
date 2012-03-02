@@ -3,6 +3,8 @@ package com.rvkb.rfs
 import com.rvkb.rfs.fileobserver.FsEventCreated
 import com.rvkb.rfs.fileobserver.FsEventUpdated
 import com.rvkb.rfs.fileobserver.FsEventDeleted
+import com.rvkb.rfs.model.Buddy
+import com.rvkb.rfs.fileobserver.FsEventInit
 
 class Broadcaster {
 
@@ -12,16 +14,32 @@ class Broadcaster {
         this.store = store
     }
 
+    def log(msg) {
+        println "*** $msg"
+    }
+
+    def broadcast(FsEventInit e) {
+        log(e)
+    }
+
     def broadcast(FsEventCreated e) {
+        log(e)
+//        def buddies = store.doInTxWithResult({ st,sess ->
+//            store.getAllBuddies()
+//        })
+//        buddies.each { Buddy b ->
+            // sent HTTP req with
+            // file path and md5
+//            HttpGet req = new HttpGet("${b.url}/created/")
 
     }
 
     def broadcast(FsEventUpdated e) {
-
+        log(e)
     }
 
     def broadcast(FsEventDeleted e) {
-
+        log(e)
     }
 
 }

@@ -4,5 +4,6 @@ class FsEntry {
 
     File file
     Long lastModified
+    String md5
 
 }

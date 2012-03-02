@@ -76,7 +76,7 @@
 
     <listener>
         <display-name>WokoInitListener</display-name>
-        <listener-class>woko.ri.RiWokoInitListener</listener-class>
+        <listener-class>com.rvkb.rfs.RfsInitListener</listener-class>
     </listener>
 
     <context-param>

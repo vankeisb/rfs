@@ -15,4 +15,8 @@ class Buddy {
 
     String url
 
+    String username
+
+    String password
+
 }

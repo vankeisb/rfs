@@ -2,6 +2,9 @@ package com.rvkb.rfs
 
 import woko.hbcompass.HibernateCompassStore
 import com.rvkb.rfs.model.Config
+import com.rvkb.rfs.model.Buddy
+import org.hibernate.criterion.Order
+import com.rvkb.rfs.model.File
 
 class RfsStore extends HibernateCompassStore {
 
@@ -15,5 +18,15 @@ class RfsStore extends HibernateCompassStore {
 
     void removeFile(String absolutePath) {
         session.delete("select f from com.rvkb.rfs.model.File as f where path = '$absolutePath'")
+    }
+
+    List<Buddy> getBuddies() {
+        return session.createCriteria(Buddy.class).list()
+    }
+
+    List<File> getFiles() {
+        return session.createCriteria(File.class).
+            addOrder(Order.asc("path")).
+            list()
     }
 }

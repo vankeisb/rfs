@@ -16,9 +16,9 @@ class FileSystemObserver {
 
     def files = [:]
 
-//    def genMD5(File f) {
-//        return md.digest(f.getText("UTF-8").bytes)
-//    }
+    String genMD5(File f) {
+        return new String(md.digest(f.getText("UTF-8").bytes))
+    }
 
     FileSystemObserver addCallback(Closure c) {
         callbacks << c
@@ -26,20 +26,27 @@ class FileSystemObserver {
     }
 
     FileSystemObserver init() {
-        println "initializing..."
         baseDirs.each {
             it.eachFileRecurse { File f ->
                 if (!f.directory && !files[f.absolutePath]) {
-                    files[f.absolutePath] = createEntry(f)
-                    println "Added entry for $f.absolutePath"
+                    def entry = createEntry(f)
+                    files[f.absolutePath] = entry
+                    fireFileEvent(new FsEventInit(entry))
                 }
             }
         }
         this
     }
 
+    List<File> getBaseDirs() {
+        return baseDirs
+    }
+
     private FsEntry createEntry(File f) {
-        return new FsEntry(file: f,lastModified: f.lastModified())
+        return new FsEntry(
+            file: f,
+            lastModified: f.lastModified(),
+            md5: genMD5(f))
     }
 
     void stop() {
