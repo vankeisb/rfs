@@ -4,8 +4,12 @@ import com.rvkb.rfs.model.Config
 import net.sourceforge.jfacets.annotations.FacetKey
 import woko.facets.builtin.RenderTitle
 import woko.facets.builtin.all.RenderTitleImpl
+import net.sourceforge.jfacets.annotations.FacetKeyList
 
-@FacetKey(name="renderTitle", profileId="all", targetObjectType=Config.class)
+@FacetKeyList(keys=[
+    @FacetKey(name="renderTitle", profileId="guest", targetObjectType=Config.class),
+    @FacetKey(name="renderTitle", profileId="admin", targetObjectType=Config.class)
+])
 class RenderTitleConfigImpl extends RenderTitleImpl implements RenderTitle {
 
     @Override

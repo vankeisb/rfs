@@ -1,4 +1,5 @@
 <%@ page import="woko.facets.builtin.WokoFacets" %>
+<%@ page import="com.rvkb.rfs.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -33,24 +34,26 @@
                         <h2>
                             Buddies
                         </h2>
-                            <c:choose>
-                                <c:when test="${not empty home.buddies}">
-                                    <ul>
-                                        <c:forEach items="${home.buddies}" var="buddy">
-                                            <li>
-                                                <w:url object="${buddy}" var="buddyUrl"/>
-                                                <a href="${buddyUrl}">${buddy.name}</a>
-                                            </li>
-                                        </c:forEach>
-                                    </ul>
-                                </c:when>
-                                <c:otherwise>
-                                    <p>
-                                        You haven't got no buddies.
-                                    </p>
-                                </c:otherwise>
-                            </c:choose>
-                        <a href="#" class="btn">Manage buddies</a>
+                        <c:choose>
+                            <c:when test="${not empty home.buddies}">
+                                <ul>
+                                    <c:forEach items="${home.buddies}" var="buddy">
+                                        <li>
+                                            <w:url object="${buddy}" var="buddyUrl"/>
+                                            <w:facet facetName="renderTitle" targetObject="${buddy}"/>
+                                            <a href="${buddyUrl}">${renderTitle.title}</a>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </c:when>
+                            <c:otherwise>
+                                <p>
+                                    You haven't got no buddies.
+                                </p>
+                            </c:otherwise>
+                        </c:choose>
+                        <w:url facetName="save" targetObjectClass="<%=User.class%>" var="addBuddyUrl"/>
+                        <a href="${addBuddyUrl}" class="btn">Add buddy</a>
                     </div>
                     <div class="span9">
                         <h2>Shared folder contents <small>${fn:length(home.files)} file(s)</small></h2>

@@ -7,6 +7,7 @@ import net.sourceforge.stripes.action.ActionBeanContext
 import net.sourceforge.stripes.action.RedirectResolution
 import net.sourceforge.stripes.action.Resolution
 import woko.facets.BaseResolutionFacet
+import net.sourceforge.stripes.action.SimpleMessage
 
 @FacetKey(name="populate", profileId="admin")
 @Mixin(FacetCategory)
@@ -22,6 +23,9 @@ class PopulateImpl extends BaseResolutionFacet {
               roles: ["buddy"],
               outgoingUsername: "babz",
               outgoingPassword: "babz")
+
+            abc.messages << new SimpleMessage("Populated")
+
         }
         return new RedirectResolution("/home")
 

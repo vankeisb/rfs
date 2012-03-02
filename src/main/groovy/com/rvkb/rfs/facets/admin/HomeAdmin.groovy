@@ -27,7 +27,7 @@ class HomeAdmin extends HomeImpl {
         }
     }
 
-    List<File> getFiles() {
+    List<com.rvkb.rfs.model.File> getFiles() {
         return store.files
     }
 

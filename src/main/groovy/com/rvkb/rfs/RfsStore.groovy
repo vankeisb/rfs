@@ -4,7 +4,6 @@ import woko.hbcompass.HibernateCompassStore
 import com.rvkb.rfs.model.Config
 
 import org.hibernate.criterion.Order
-import com.rvkb.rfs.model.File
 import org.hibernate.criterion.Restrictions
 import com.rvkb.rfs.model.User
 
@@ -17,7 +16,7 @@ class RfsStore extends HibernateCompassStore {
     @Override
     Object load(String className, String key) {
         Class c = getMappedClass(className)
-        if (c==File.class) {
+        if (c==com.rvkb.rfs.model.File.class) {
             try {
                 Long.parseLong(key)
             } catch(NumberFormatException) {
@@ -29,11 +28,11 @@ class RfsStore extends HibernateCompassStore {
         return super.load(className, key)    //To change body of overridden methods use File | Settings | File Templates.
     }
 
-    File loadFileByRelativePath(String relativePath) {
+    com.rvkb.rfs.model.File loadFileByRelativePath(String relativePath) {
         if (!relativePath.startsWith("/")) {
             relativePath = "/$relativePath"
         }
-        session.createCriteria(File.class).add(Restrictions.eq("path", relativePath)).uniqueResult()
+        session.createCriteria(com.rvkb.rfs.model.File.class).add(Restrictions.eq("path", relativePath)).uniqueResult()
     }
 
     Config getConfig() {
@@ -47,12 +46,12 @@ class RfsStore extends HibernateCompassStore {
     List<User> getBuddies() {
         return session.createCriteria(User.class).
           addOrder(Order.asc("username")).
-          add(Restrictions.in("roles", "buddy")).
+          add(Restrictions.eq("buddy", true)).
           list()
     }
 
-    List<File> getFiles() {
-        return session.createCriteria(File.class).
+    List<com.rvkb.rfs.model.File> getFiles() {
+        return session.createCriteria(com.rvkb.rfs.model.File.class).
             addOrder(Order.asc("path")).
             list()
     }

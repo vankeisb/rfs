@@ -18,4 +18,13 @@ class User extends HbUser {
     @NotNull
     String outgoingPassword
 
+    boolean buddy = false
+
+    @Override
+    void setRoles(List<String> roles) {
+        super.setRoles(roles)
+        buddy = roles?.contains("buddy")
+    }
+
+
 }

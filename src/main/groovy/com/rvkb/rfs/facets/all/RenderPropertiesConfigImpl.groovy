@@ -3,8 +3,12 @@ package com.rvkb.rfs.facets.all
 import com.rvkb.rfs.model.Config
 import net.sourceforge.jfacets.annotations.FacetKey
 import woko.facets.builtin.all.RenderPropertiesEditImpl
+import net.sourceforge.jfacets.annotations.FacetKeyList
 
-@FacetKey(name="renderPropertiesEdit", profileId="all", targetObjectType=Config.class)
+@FacetKeyList(keys=[
+    @FacetKey(name="renderPropertiesEdit", profileId="guest", targetObjectType=Config.class),
+    @FacetKey(name="renderPropertiesEdit", profileId="admin", targetObjectType=Config.class)
+])
 class RenderPropertiesConfigImpl extends RenderPropertiesEditImpl {
 
     @Override
