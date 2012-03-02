@@ -19,6 +19,8 @@ import org.apache.http.client.CookieStore
 import org.apache.http.util.EntityUtils
 import org.apache.http.HttpRequest
 import com.rvkb.rfs.model.Config
+import com.rvkb.rfs.fileobserver.FsEvent
+import woko.hibernate.TxCallbackWithResult
 
 class Broadcaster {
 
@@ -64,11 +66,10 @@ class Broadcaster {
         return localContext
     }
 
-    def broadcast(FsEventCreated e) {
+    private def doBroadcast(String facetName, FsEvent e, String relativePath) {
 
-        println "File created, broadcasting..."
+        println "*** File event received, broadcasting ($e)"
 
-        log(e)
         def buddies
         Config config
         store.doInTx({ st,sess ->
@@ -84,7 +85,7 @@ class Broadcaster {
                 HttpContext c = login(b.url, config.username, config.password)
                 if (c) {
                     println "*** Authenticated with buddy : $b.username"
-                    String res = httpGet(c, "$b.url/created?facet.path=${e.entry.relativePath}&facet.user=${config.username}")
+                    String res = httpGet(c, "$b.url/$facetName?facet.path=${relativePath}&facet.user=${config.username}")
                     println res
                 } else {
                     println "*** Could not authenticate with buddy : $b.username"
@@ -94,12 +95,19 @@ class Broadcaster {
 
     }
 
+    def broadcast(FsEventCreated e) {
+        doBroadcast("created", e, e.entry.relativePath)
+    }
+
     def broadcast(FsEventUpdated e) {
-        log(e)
+        doBroadcast("updated", e, e.entry.relativePath)
     }
 
     def broadcast(FsEventDeleted e) {
-        log(e)
+        Config config = store.doInTxWithResult({ st,sess ->
+            store.config
+        } as TxCallbackWithResult)
+        doBroadcast("deleted", e, e.getRelativePath(config.baseDir))
     }
 
 }

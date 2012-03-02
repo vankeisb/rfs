@@ -2,7 +2,7 @@ package com.rvkb.rfs.fileobserver
 
 class FsEventDeleted implements FsEvent {
 
-    private String absolutePath
+    private final String absolutePath
 
     FsEventDeleted(String absolutePath) {
         this.absolutePath = absolutePath
@@ -14,6 +14,10 @@ class FsEventDeleted implements FsEvent {
 
     public String toString ( ) {
         "FsEventDeleted{absolutePath='$absolutePath'}"
+    }
+
+    String getRelativePath(String baseDir) {
+        return absolutePath[baseDir.length()..-1]
     }
 
 }
