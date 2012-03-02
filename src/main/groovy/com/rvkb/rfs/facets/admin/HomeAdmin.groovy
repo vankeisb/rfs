@@ -9,6 +9,7 @@ import net.sourceforge.stripes.action.ForwardResolution
 import net.sourceforge.stripes.action.RedirectResolution
 import net.sourceforge.stripes.action.Resolution
 import woko.facets.builtin.all.HomeImpl
+import com.rvkb.rfs.model.Download
 
 @FacetKey(name="home", profileId="admin")
 @Mixin(FacetCategory)
@@ -37,6 +38,10 @@ class HomeAdmin extends HomeImpl {
 
     List<User> getBuddies() {
         return store.buddies
+    }
+
+    List<Download> getLastDownloads() {
+        return store.lastDownloads
     }
 
 }

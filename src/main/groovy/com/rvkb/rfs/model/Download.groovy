@@ -21,4 +21,8 @@ class Download {
     @ManyToOne(fetch=FetchType.LAZY)
     User buddy
 
+    Date startedOn
+
+    Date finishedOn
+
 }

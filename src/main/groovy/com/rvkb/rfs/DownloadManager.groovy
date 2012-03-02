@@ -10,6 +10,7 @@ import woko.hibernate.TxCallbackWithResult
 import com.rvkb.rfs.model.Config
 import woko.hibernate.TxCallback
 import com.rvkb.rfs.model.Download
+import org.hibernate.Session
 
 class DownloadManager {
 
@@ -36,18 +37,28 @@ class DownloadManager {
 
             println "*** Downloading : $url to $targetFile"
 
+            Download d
             store.doInTx({ st, session ->
-                Download d = new Download(buddy: buddy, relativePath: relativePath)
+                d = new Download(buddy: buddy, relativePath: relativePath, startedOn: new Date())
                 store.save(d)
             } as TxCallback)
 
             HttpGet get = new HttpGet(url)
-            httpclient.execute(get, { HttpResponse r ->
-                // write the stream to local file
-                new File(targetFile).withOutputStream { os ->
-                    os << r.entity.content
-                }
-            } as ResponseHandler)
+            try {
+                httpclient.execute(get, { HttpResponse r ->
+                    // write the stream to local file
+                    new File(targetFile).withOutputStream { os ->
+                        os << r.entity.content
+                    }
+                } as ResponseHandler)
+            } finally {
+                store.doInTx({ st, Session session ->
+                    d = session.load(Download.class, d.id)
+                    d.finishedOn = new Date()
+                    store.save(d)
+                } as TxCallback)
+            }
+
         }
 
     }
