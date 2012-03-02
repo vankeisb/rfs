@@ -14,7 +14,7 @@ class RenderPropertiesEditBuddyImpl extends RenderPropertiesEditImpl implements 
 
     @Override
     List<String> getPropertyNames() {
-        ["url", "username", "password", "outgoingUsername", "outgoingPassword"]
+        ["url", "username", "password"]
     }
 
 }

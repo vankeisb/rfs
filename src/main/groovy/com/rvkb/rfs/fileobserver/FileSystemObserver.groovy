@@ -26,10 +26,10 @@ class FileSystemObserver {
     }
 
     FileSystemObserver init() {
-        baseDirs.each {
-            it.eachFileRecurse { File f ->
+        baseDirs.each { baseDir ->
+            baseDir.eachFileRecurse { File f ->
                 if (!f.directory && !files[f.absolutePath]) {
-                    def entry = createEntry(f)
+                    def entry = createEntry(baseDir,f)
                     files[f.absolutePath] = entry
                     fireFileEvent(new FsEventInit(entry))
                 }
@@ -42,8 +42,9 @@ class FileSystemObserver {
         return baseDirs
     }
 
-    private FsEntry createEntry(File f) {
+    private FsEntry createEntry(File baseDir, File f) {
         return new FsEntry(
+            baseDir: baseDir,
             file: f,
             lastModified: f.lastModified(),
             md5: genMD5(f))
@@ -58,7 +59,7 @@ class FileSystemObserver {
         Thread.start {
             while(!stop) {
                 for (File baseDir : baseDirs) {
-                    checkFile(baseDir)
+                    checkFile(baseDir, baseDir)
                     if (stop) {
                         break
                     }
@@ -79,7 +80,7 @@ class FileSystemObserver {
         }
     }
 
-    private void checkFile(File f) {
+    private void checkFile(File baseDir, File f) {
         try {
             Thread.sleep(1000)
         } catch(InterruptedException e) {
@@ -87,7 +88,7 @@ class FileSystemObserver {
         }
         if (!stop && f) {
             for (File child : f.listFiles()) {
-                checkFile(child)
+                checkFile(baseDir, child)
                 if (stop) {
                     break
                 }
@@ -97,14 +98,16 @@ class FileSystemObserver {
                 //println "Checking file : $f"
                 def entry = files[f.absolutePath]
                 if (!entry) {
-                    files[f.absolutePath] = createEntry(f)
-                    fireFileEvent(new FsEventCreated(f))
+                    def newEntry = createEntry(baseDir, f)
+                    files[f.absolutePath] = newEntry
+                    fireFileEvent(new FsEventCreated(newEntry))
                 } else {
                     // check date change
                     if (f.lastModified()>entry.lastModified) {
                         files.remove(f.absolutePath)
-                        files[f.absolutePath] = createEntry(f)
-                        fireFileEvent(new FsEventUpdated(f))
+                        def newEntry = createEntry(baseDir, f)
+                        files[f.absolutePath] = newEntry
+                        fireFileEvent(new FsEventUpdated(newEntry))
                     }
                 }
             }
@@ -118,7 +121,7 @@ class FileSystemObserver {
     }
 
     static void main(String[] args) {
-        new FileSystemObserver([new File("C:/Users/Remi Vankeisbelck/projects/fileobserver/test-data")]).
+        new FileSystemObserver([new File("/tmp/testdata")]).
                 init().
                 addCallback { evt ->
                     println "Callback : $evt"

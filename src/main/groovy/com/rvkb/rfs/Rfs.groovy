@@ -17,10 +17,12 @@ class Rfs {
     private final Broadcaster b
     private FileSystemObserver fileSystemObserver
     private File baseDir
+    private final DownloadManager downloadManager
 
     Rfs(RfsStore store) {
         this.store = store
         b = new Broadcaster(store)
+        downloadManager = new DownloadManager(store)
     }
 
     File getBaseDir() {
@@ -58,7 +60,7 @@ class Rfs {
                     b.broadcast(ei)
                 } else if (e instanceof FsEventCreated) {
                     FsEventCreated ec = (FsEventCreated)e
-                    com.rvkb.rfs.model.File dbFile = new com.rvkb.rfs.model.File(path: relativePath(ec.file))
+                    com.rvkb.rfs.model.File dbFile = new com.rvkb.rfs.model.File(path: relativePath(ec.entry.file))
                     store.doInTx({ store,session ->
                         store.save(dbFile)
                     } as TxCallback)
@@ -81,6 +83,12 @@ class Rfs {
     def stop() {
         logger.info("Stopping file observer...")
         fileSystemObserver?.stop()
+        logger.info("Stopping download manager...")
+        downloadManager?.stop()
+    }
+
+    DownloadManager getDownloadManager() {
+        return downloadManager
     }
 
 

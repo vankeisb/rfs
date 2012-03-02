@@ -12,4 +12,8 @@ class Config {
 
     String baseDir
 
+    String username
+
+    String password
+
 }

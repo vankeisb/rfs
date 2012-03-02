@@ -59,4 +59,9 @@ class RfsStore extends HibernateCompassStore {
     void removeAllFiles() {
         session.delete("select f from com.rvkb.rfs.model.File as f")
     }
+
+    User getBuddy(String username) {
+        session.createCriteria(User.class).add(Restrictions.eq("username", username)).uniqueResult()
+    }
+
 }

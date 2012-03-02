@@ -2,18 +2,18 @@ package com.rvkb.rfs.fileobserver
 
 class FsEventCreated implements FsEvent {
 
-    private final File file
+    private final FsEntry entry
 
-    FsEventCreated(File file) {
-        this.file = file
+    FsEventCreated(FsEntry entry) {
+        this.entry = entry
     }
 
-    File getFile() {
-        file
+    FsEntry getEntry() {
+        entry
     }
 
     public String toString ( ) {
-        "FsEventCreated{file='$file'}"
+        "FsEventCreated{entry='$entry'}"
     }
 
 }

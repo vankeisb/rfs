@@ -2,18 +2,18 @@ package com.rvkb.rfs.fileobserver
 
 class FsEventUpdated implements FsEvent {
 
-    private final File file
+    private final FsEntry entry
 
-    FsEventUpdated(File file) {
-        this.file = file
+    FsEventUpdated(FsEntry entry) {
+        this.entry = entry
     }
 
-    File getFile() {
-        return file
+    FsEntry getEntry() {
+        return entry
     }
 
     public String toString ( ) {
-        "FsEventUpdated{file='$file'}"
+        "FsEventUpdated{entry='$entry'}"
     }
 
 }

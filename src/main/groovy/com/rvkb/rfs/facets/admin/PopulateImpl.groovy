@@ -13,18 +13,19 @@ import net.sourceforge.stripes.action.SimpleMessage
 @Mixin(FacetCategory)
 class PopulateImpl extends BaseResolutionFacet {
 
+    String user
+
     Resolution getResolution(ActionBeanContext abc) {
         def um = facetContext.woko.userManager
-        if (store.buddies.size()==0) {
+        if (store.buddies.size()==0 && user) {
+            def port = user=="kakou" ? "9999" : "8080"
             store.save new User(
-              username: "kakou",
-              url: "http://kakou.dyndns.org",
-              password: um.encodePassword("kakou"),
-              roles: ["buddy"],
-              outgoingUsername: "babz",
-              outgoingPassword: "babz")
+              username: user,
+              url: "http://localhost:$port/rfs",
+              password: um.encodePassword(user),
+              roles: ["buddy"])
 
-            abc.messages << new SimpleMessage("Populated")
+            abc.messages << new SimpleMessage("Populated $user")
 
         }
         return new RedirectResolution("/home")

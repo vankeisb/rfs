@@ -12,12 +12,6 @@ class User extends HbUser {
     @NotNull
     String url
 
-    @NotNull
-    String outgoingUsername
-
-    @NotNull
-    String outgoingPassword
-
     boolean buddy = false
 
     @Override

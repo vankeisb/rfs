@@ -4,6 +4,8 @@ import woko.facets.BaseFacet
 import com.rvkb.rfs.RfsStore
 import com.rvkb.rfs.model.Config
 import javax.servlet.http.HttpServletRequest
+import com.rvkb.rfs.Rfs
+import com.rvkb.rfs.RfsInitListener
 
 @Category(BaseFacet.class)
 class FacetCategory {
@@ -33,6 +35,11 @@ class FacetCategory {
 
     def getTargetObject() {
         return facetContext.targetObject
+    }
+
+    Rfs getRfs() {
+        HttpServletRequest request = facetContext.request
+        return RfsInitListener.getRfs(request.session.servletContext)
     }
 
 }

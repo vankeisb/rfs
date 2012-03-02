@@ -13,7 +13,7 @@ class RenderPropertiesBuddyImpl extends RenderPropertiesImpl {
 
     @Override
     List<String> getPropertyNames() {
-        ["url", "username", "password", "outgoingUsername", "outgoingPassword"]
+        ["url", "username", "password"]
     }
 
 
