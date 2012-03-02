@@ -5,11 +5,34 @@ import com.rvkb.rfs.model.Config
 import com.rvkb.rfs.model.Buddy
 import org.hibernate.criterion.Order
 import com.rvkb.rfs.model.File
+import org.hibernate.criterion.Restrictions
 
 class RfsStore extends HibernateCompassStore {
 
     RfsStore(List<String> packageNames) {
         super(packageNames)
+    }
+
+    @Override
+    Object load(String className, String key) {
+        Class c = getMappedClass(className)
+        if (c==File.class) {
+            try {
+                Long.parseLong(key)
+            } catch(NumberFormatException) {
+                // try to load by path !
+                return loadFileByRelativePath(key)
+            }
+        }
+
+        return super.load(className, key)    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    File loadFileByRelativePath(String relativePath) {
+        if (!relativePath.startsWith("/")) {
+            relativePath = "/$relativePath"
+        }
+        session.createCriteria(File.class).add(Restrictions.eq("path", relativePath)).uniqueResult()
     }
 
     Config getConfig() {
@@ -21,12 +44,18 @@ class RfsStore extends HibernateCompassStore {
     }
 
     List<Buddy> getBuddies() {
-        return session.createCriteria(Buddy.class).list()
+        return session.createCriteria(Buddy.class).
+          addOrder(Order.asc("name")).
+          list()
     }
 
     List<File> getFiles() {
         return session.createCriteria(File.class).
             addOrder(Order.asc("path")).
             list()
+    }
+
+    void removeAllFiles() {
+        session.delete("select f from com.rvkb.rfs.model.File as f")
     }
 }

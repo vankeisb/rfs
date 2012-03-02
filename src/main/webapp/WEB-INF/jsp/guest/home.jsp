@@ -15,18 +15,17 @@
                     Blah blah
                 </p>
                 <div class="row-fluid">
-                    <div class="span8">
+                    <div class="span7">
                         <h2>Shared folder contents</h2>
                         <ul id="files">
                         <c:forEach items="${home.files}" var="file">
                             <li>
-                                <w:url facetName="download" object="${file}" var="dlUrl"/>
-                                <a href="${dlUrl}">${file.path}</a>
+                                <a href="${pageContext.request.contextPath}/download/File${file.path}">${file.path}</a>
                             </li>
                         </c:forEach>
                         </ul>
                     </div>
-                    <div class="span4">
+                    <div class="span5">
                         <h2>
                             Configuration
                         </h2>
@@ -35,12 +34,30 @@
                         </p>
                         <p>
                             <w:url facetName="edit" object="${home.config}" var="editCfgUrl"/>
-                            <a href="${editCfgUrl}">Edit config</a>
+                            <a href="${editCfgUrl}" class="btn">Edit config</a>
                         </p>
+
                         <h2>
                             Buddies
                         </h2>
-
+                            <c:choose>
+                                <c:when test="${not empty home.buddies}">
+                                    <ul>
+                                        <c:forEach items="${home.buddies}" var="buddy">
+                                            <li>
+                                                <w:url object="${buddy}" var="buddyUrl"/>
+                                                <a href="${buddyUrl}">${buddy.name}</a>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </c:when>
+                                <c:otherwise>
+                                    <p>
+                                        You haven't got no buddies.
+                                    </p>
+                                </c:otherwise>
+                            </c:choose>
+                        <a href="#" class="btn">Manage buddies</a>
                     </div>
                 </div>
             </div>

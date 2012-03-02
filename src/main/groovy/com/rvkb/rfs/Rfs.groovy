@@ -39,6 +39,10 @@ class Rfs {
         this.baseDir = baseDir
         logger.info("initializing with base dir '$baseDir.absolutePath'")
         stop()
+        store.doInTx({ hbs, session ->
+            store.removeAllFiles()
+        } as TxCallback)
+
         // init phase
         logger.info("Creating new observer")
         fileSystemObserver = new FileSystemObserver([baseDir]).

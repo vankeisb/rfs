@@ -26,10 +26,6 @@ class RfsInitListener extends RiWokoInitListener {
         logger.info("Scanning packages for Entities : $packageNames")
         RfsStore s = new RfsStore(packageNames)
 
-        s.doInTx({ hbs, Session session ->
-            session.delete("select f from com.rvkb.rfs.model.File as f")
-        } as TxCallback)
-
         rfs = new Rfs(s)
         servletContext.setAttribute("rfs", rfs)
 
