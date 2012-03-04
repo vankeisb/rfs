@@ -1,31 +1,19 @@
 package com.rvkb.rfs
 
-import com.rvkb.rfs.fileobserver.FsEventCreated
-import com.rvkb.rfs.fileobserver.FsEventUpdated
-import com.rvkb.rfs.fileobserver.FsEventDeleted
-
-import com.rvkb.rfs.fileobserver.FsEventInit
-import com.rvkb.rfs.model.User
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.client.HttpClient
-import org.apache.http.HttpResponse
-import woko.hibernate.TxCallback
-import org.apache.http.protocol.BasicHttpContext
-import org.apache.http.protocol.HttpContext
-import org.apache.http.impl.client.BasicCookieStore
-import org.apache.http.client.protocol.ClientContext
-import org.apache.http.client.CookieStore
-import org.apache.http.util.EntityUtils
-import org.apache.http.HttpRequest
 import com.rvkb.rfs.model.Config
-import com.rvkb.rfs.fileobserver.FsEvent
+import com.rvkb.rfs.model.User
+import com.rvkb.rfs.util.RfsHttpClient
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.protocol.HttpContext
+import woko.hibernate.TxCallback
 import woko.hibernate.TxCallbackWithResult
+import com.rvkb.rfs.fileobserver.*
+import org.apache.http.HttpResponse
 
 class Broadcaster {
 
     final RfsStore store
-    HttpClient httpclient = new DefaultHttpClient();
+    RfsHttpClient cli = new RfsHttpClient(new DefaultHttpClient())
 
     Broadcaster(RfsStore store) {
         this.store = store
@@ -39,36 +27,9 @@ class Broadcaster {
         log(e)
     }
 
-    private String httpGet(HttpContext ctx, String url) {
-        println "REQ : $url"
-        HttpRequest req = new HttpGet(url)
-        HttpResponse resp = httpclient.execute(req, ctx)
-        StringWriter sw = new StringWriter()
-        try {
-            resp.entity.content.withReader { r->
-                sw << r
-            }
-            sw.flush()
-            println "RESP : "
-            println sw.toString()
-        } finally {
-            EntityUtils.consume(resp.entity)
-        }
-        return sw.toString()
-    }
-
-    private HttpContext login(String baseUrl, String username, String password) {
-        HttpContext localContext = new BasicHttpContext();
-        CookieStore cookieStore = new BasicCookieStore();
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-        String resp = httpGet(localContext, "$baseUrl/login?username=$username&password=$password&login=true")
-        println resp
-        return localContext
-    }
-
     private def doBroadcast(String facetName, FsEvent e, String relativePath) {
 
-        println "*** File event received, broadcasting ($e)"
+        log "File event received, broadcasting ($e)"
 
         def buddies
         Config config
@@ -79,16 +40,18 @@ class Broadcaster {
         Thread.start {
             buddies.each { User b ->
 
-                println "*** Notifying buddy : $b.username"
+                log "Notifying buddy : $b.username"
 
                 // .../created/babz/path/to/file
-                HttpContext c = login(b.url, config.username, config.password)
+                HttpContext c = cli.login(b.url, config.username, config.password)
                 if (c) {
-                    println "*** Authenticated with buddy : $b.username"
-                    String res = httpGet(c, "$b.url/$facetName?facet.path=${relativePath}&facet.user=${config.username}")
-                    println res
+                    String url = "$b.url/$facetName?facet.path=${URLEncoder.encode(relativePath)}"
+                    println "Authenticated with buddy : $b.username : notifying url $url"
+                    cli.get(c, url) { HttpResponse resp ->
+                        println cli.responseToString(resp)
+                    }
                 } else {
-                    println "*** Could not authenticate with buddy : $b.username"
+                    println "Could not authenticate with buddy : $b.username"
                 }
             }
         }
@@ -108,6 +71,10 @@ class Broadcaster {
             store.config
         } as TxCallbackWithResult)
         doBroadcast("deleted", e, e.getRelativePath(config.baseDir))
+    }
+
+    void close() {
+        cli?.close()
     }
 
 }

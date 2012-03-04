@@ -54,14 +54,16 @@ class Rfs {
                     // create the file in the db
                     FsEventInit ei = (FsEventInit)e
                     com.rvkb.rfs.model.File dbFile = new com.rvkb.rfs.model.File(path: relativePath(ei.entry.file))
-                    store.doInTx({ store,session ->
+                    store.doInTx({ st,session ->
+                        store.removeFile(dbFile.path) // make sure we don't create dups !
                         store.save(dbFile)
                     } as TxCallback)
                     b.broadcast(ei)
                 } else if (e instanceof FsEventCreated) {
                     FsEventCreated ec = (FsEventCreated)e
                     com.rvkb.rfs.model.File dbFile = new com.rvkb.rfs.model.File(path: relativePath(ec.entry.file))
-                    store.doInTx({ store,session ->
+                    store.doInTx({ st,session ->
+                        store.removeFile(dbFile.path)
                         store.save(dbFile)
                     } as TxCallback)
                     b.broadcast(ec)

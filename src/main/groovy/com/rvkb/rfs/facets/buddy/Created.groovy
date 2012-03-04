@@ -17,12 +17,9 @@ class Created extends BaseResolutionFacet {
     @Validate(required=true)
     String path
 
-    @Validate(required=true)
-    String user
-
     Resolution getResolution(ActionBeanContext abc) {
         // lookup for the buddy
-        User u = store.getBuddy(user)
+        User u = currentUser
         if (!u) {
             return new ErrorResolution(404)
         }

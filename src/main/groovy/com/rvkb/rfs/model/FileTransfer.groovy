@@ -17,7 +17,6 @@ class FileTransfer {
     @NotNull
     String relativePath
 
-    @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
     User buddy
 

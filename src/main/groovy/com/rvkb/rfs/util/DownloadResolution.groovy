@@ -14,6 +14,7 @@ class DownloadResolution extends StreamingResolution {
         super("rfsfile", new FileInputStream(f))
         setFilename(f.name)
         setRangeSupport(true)
+        setLength(f.length())
     }
 
     @Override
