@@ -3,6 +3,7 @@ package com.rvkb.rfs.dns
 import woko.ri.RiWokoInitListener
 import woko.users.UserManager
 import woko.persistence.ObjectStore
+import com.rvkb.rfs.dns.model.DnsEntry
 
 class DnsInitListener extends RiWokoInitListener {
 

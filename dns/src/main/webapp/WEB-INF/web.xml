@@ -26,6 +26,7 @@
             <param-name>ActionResolver.Packages</param-name>
             <param-value>
                 woko.actions
+                com.rvkb.rfs.dns.actions
             </param-value>
         </init-param>
         <init-param>
