@@ -14,7 +14,7 @@ class FileSystemObserver {
         this.baseDirs.addAll(baseDirs)
     }
 
-    def files = [:]
+    Map<String,FsEntry> files = [:]
 
     String genMD5(File f) {
         return new String(md.digest(f.getText("UTF-8").bytes))
@@ -29,7 +29,7 @@ class FileSystemObserver {
         baseDirs.each { baseDir ->
             baseDir.eachFileRecurse { File f ->
                 if (!f.directory && !files[f.absolutePath]) {
-                    def entry = createEntry(baseDir,f)
+                    def entry = new FsEntry(baseDir,f, false)
                     files[f.absolutePath] = entry
                     fireFileEvent(new FsEventInit(entry))
                 }
@@ -40,14 +40,6 @@ class FileSystemObserver {
 
     List<File> getBaseDirs() {
         return baseDirs
-    }
-
-    private FsEntry createEntry(File baseDir, File f) {
-        return new FsEntry(
-            baseDir: baseDir,
-            file: f,
-            lastModified: f.lastModified(),
-            md5: genMD5(f))
     }
 
     void stop() {
@@ -94,21 +86,55 @@ class FileSystemObserver {
                 }
             }
             if (!stop && !f.directory) {
-                // check if we have an entry for this file
-                //println "Checking file : $f"
-                def entry = files[f.absolutePath]
-                if (!entry) {
-                    def newEntry = createEntry(baseDir, f)
-                    files[f.absolutePath] = newEntry
-                    fireFileEvent(new FsEventCreated(newEntry))
-                } else {
-                    // check date change
-                    if (f.lastModified()>entry.lastModified) {
+                FsEntry entry = files[f.absolutePath]
+
+                println "*** checking $f.absolutePath"
+
+                if (entry) {
+                    if (entry.justCreated) {
+
+                        println "*** just created : checking sizes"
+
                         files.remove(f.absolutePath)
-                        def newEntry = createEntry(baseDir, f)
+                        FsEntry newEntry
+                        if (f.size()==entry.lastSize) {
+
+                            println "*** just created : stale size, firing created event"
+
+                            // allright, file size hasn't changed and entry
+                            // is justCreated : fire the created event
+                            newEntry = new FsEntry(baseDir, f, false)
+                            fireFileEvent(new FsEventCreated(newEntry))
+                        } else {
+                            println "*** just created : size changed, just replace entry"
+                            newEntry = new FsEntry(baseDir, f, true)
+                        }
                         files[f.absolutePath] = newEntry
-                        fireFileEvent(new FsEventUpdated(newEntry))
+                    } else {
+
+                        println "*** just created == false : checking sizes"
+
+                        // created event has already been fired : check
+                        // the file size and see if it's been updated
+                        if (f.size()!=entry.lastSize) {
+
+                            println "*** Size updated, fire update"
+
+                            // different size, fire an update
+                            files.remove(f.absolutePath)
+                            def newEntry = new FsEntry(baseDir, f, false)
+                            files[f.absolutePath] = newEntry
+                            fireFileEvent(new FsEventUpdated(newEntry))
+                        }
                     }
+                } else {
+
+                    println "*** no entry : creating one"
+
+                    // no entry found : create one but don't fire event yet
+                    // we will check in next pass for the length of the file,
+                    // and fire only if it hasn't changed
+                    files[f.absolutePath] = new FsEntry(baseDir, f, true)
                 }
             }
         }

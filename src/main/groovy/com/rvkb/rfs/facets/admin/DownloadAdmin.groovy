@@ -1,4 +1,4 @@
-package com.rvkb.rfs.facets.guest
+package com.rvkb.rfs.facets.admin
 
 import net.sourceforge.jfacets.annotations.FacetKey
 import com.rvkb.rfs.model.File
@@ -11,9 +11,9 @@ import net.sourceforge.stripes.action.ErrorResolution
 import com.rvkb.rfs.util.DownloadResolution
 import com.rvkb.rfs.model.FileTransfer
 
-@FacetKey(name="download", profileId="guest", targetObjectType=File.class)
+@FacetKey(name="download", profileId="admin", targetObjectType=File.class)
 @Mixin(FacetCategory)
-class DownloadFile extends BaseResolutionFacet {
+class DownloadAdmin extends BaseResolutionFacet {
 
     Resolution getResolution(ActionBeanContext abc) {
         def fullPath = rfsConfig.baseDir
