@@ -76,7 +76,7 @@ class FileSystemObserver {
         try {
             Thread.sleep(1000)
         } catch(InterruptedException e) {
-            println "interrupted"
+            //println "interrupted"
         }
         if (!stop && f) {
             for (File child : f.listFiles()) {
@@ -88,37 +88,37 @@ class FileSystemObserver {
             if (!stop && !f.directory) {
                 FsEntry entry = files[f.absolutePath]
 
-                println "*** checking $f.absolutePath"
+                //println "*** checking $f.absolutePath"
 
                 if (entry) {
                     if (entry.justCreated) {
 
-                        println "*** just created : checking sizes"
+                        //println "*** just created : checking sizes"
 
                         files.remove(f.absolutePath)
                         FsEntry newEntry
                         if (f.size()==entry.lastSize) {
 
-                            println "*** just created : stale size, firing created event"
+                            //println "*** just created : stale size, firing created event"
 
                             // allright, file size hasn't changed and entry
                             // is justCreated : fire the created event
                             newEntry = new FsEntry(baseDir, f, false)
                             fireFileEvent(new FsEventCreated(newEntry))
                         } else {
-                            println "*** just created : size changed, just replace entry"
+                            //println "*** just created : size changed, just replace entry"
                             newEntry = new FsEntry(baseDir, f, true)
                         }
                         files[f.absolutePath] = newEntry
                     } else {
 
-                        println "*** just created == false : checking sizes"
+                        //println "*** just created == false : checking sizes"
 
                         // created event has already been fired : check
                         // the file size and see if it's been updated
                         if (f.size()!=entry.lastSize) {
 
-                            println "*** Size updated, fire update"
+                            //println "*** Size updated, fire update"
 
                             // different size, fire an update
                             files.remove(f.absolutePath)
@@ -129,7 +129,7 @@ class FileSystemObserver {
                     }
                 } else {
 
-                    println "*** no entry : creating one"
+                    //println "*** no entry : creating one"
 
                     // no entry found : create one but don't fire event yet
                     // we will check in next pass for the length of the file,
