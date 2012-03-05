@@ -84,12 +84,30 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.groovy.maven</groupId>
+                <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.0</version>
+                <version>1.2</version>
                 <configuration>
-                    <verbose>true</verbose>
+                    <providerSelection>1.7</providerSelection>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.gmaven.runtime</groupId>
+                        <artifactId>gmaven-runtime-1.7</artifactId>
+                        <version>1.2</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.codehaus.groovy</groupId>
+                                <artifactId>groovy-all</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>1.7.0</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <goals>
@@ -107,19 +125,19 @@
                 <configuration>
                     <wait>true</wait>
                     <container>
-                      <containerId>tomcat6x</containerId>
-                      <zipUrlInstaller>
-                        <url>http://apache.crihan.fr/dist/tomcat/tomcat-6/v6.0.35/bin/apache-tomcat-6.0.35.zip</url>
-                        <downloadDir>${project.build.directory}/downloads</downloadDir>
-                        <extractDir>${project.build.directory}/extracts</extractDir>
-                    </zipUrlInstaller>
+                        <containerId>tomcat6x</containerId>
+                        <zipUrlInstaller>
+                            <url>http://apache.crihan.fr/dist/tomcat/tomcat-6/v6.0.35/bin/apache-tomcat-6.0.35.zip</url>
+                            <downloadDir>${project.build.directory}/downloads</downloadDir>
+                            <extractDir>${project.build.directory}/extracts</extractDir>
+                        </zipUrlInstaller>
                     </container>
                     <configuration>
-                      <home>${project.build.directory}/tomcat6x/container</home>
-                      <properties>
-                          <cargo.servlet.port>8080</cargo.servlet.port>
-                          <cargo.container.timeout>600000</cargo.container.timeout>
-                      </properties>
+                        <home>${project.build.directory}/tomcat6x/container</home>
+                        <properties>
+                            <cargo.servlet.port>8080</cargo.servlet.port>
+                            <cargo.container.timeout>600000</cargo.container.timeout>
+                        </properties>
                     </configuration>
                 </configuration>
             </plugin>

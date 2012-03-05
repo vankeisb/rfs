@@ -9,7 +9,15 @@ class LayoutImpl extends LayoutAll {
 
     @Override
     String getAppTitle() {
-        "Rfs"
+        "RFS"
     }
+
+    @Override
+    List<String> getJsIncludes() {
+        return [
+          "/js/dojo-1.6.1/"
+        ]
+    }
+
 
 }

@@ -34,6 +34,7 @@
                         <h2>
                             Buddies
                         </h2>
+                        <div id="buddies"></div>
                         <c:choose>
                             <c:when test="${not empty home.buddies}">
                                 <ul>
