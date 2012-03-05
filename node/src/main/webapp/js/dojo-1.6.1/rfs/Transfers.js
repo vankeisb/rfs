@@ -14,6 +14,7 @@ dojo.declare("rfs.Transfers", dijit._Widget, {
     buildRendering: function() {
         this._cli = new woko.rpc.Client(this.baseUrl);
         this.inherited(arguments);
+        dojo.addClass(this.domNode, "transfers");
         this.refresh();
     },
 
@@ -36,7 +37,7 @@ dojo.declare("rfs.Transfers", dijit._Widget, {
                     transferRow.startup();
                     this.domNode.appendChild(transferRow.domNode);
                 }));
-                setTimeout(dojo.hitch(this, this.refresh), 5000);
+                setTimeout(dojo.hitch(this, this.refresh), 1000);
             }),
             onError: function(err) {
                 // TODO

@@ -36,7 +36,7 @@ dojo.declare("rfs.Buddies", dijit._Widget, {
                     buddyRow.startup();
                     this.domNode.appendChild(buddyRow.domNode);
                 }));
-                setTimeout(dojo.hitch(this, this.refresh), 10000);
+                //setTimeout(dojo.hitch(this, this.refresh), 5000);
             }),
             onError: function(err) {
                 // TODO

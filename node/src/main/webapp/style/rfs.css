@@ -27,3 +27,37 @@
 .buddyRow.authFailed {
     background-image: url("lock.png");
 }
+
+.transfers {
+    margin-bottom: 10px;
+}
+
+.transferRow, .transferRowInner {
+    padding-left: 16px;
+    background-position: left center;
+    background-repeat: no-repeat;
+}
+
+.transferRow.upload {
+    background-image: url("arrow-up.jpg");
+}
+
+.transferRow.download {
+    background-image: url("arrow-down.jpg");
+}
+
+.transferRowInner.error {
+    background-image: url("offline.png");
+}
+
+.transferRowInner.complete {
+    background-image: url("online.png");
+}
+
+.transferRowInner.inProgress {
+    background-image: url("lock.png");
+}
+
+.transferRowInner.notStarted {
+    background-image: url("lock.png");
+}
