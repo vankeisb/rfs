@@ -16,4 +16,6 @@ class Config {
 
     String password
 
+    String dns
+
 }

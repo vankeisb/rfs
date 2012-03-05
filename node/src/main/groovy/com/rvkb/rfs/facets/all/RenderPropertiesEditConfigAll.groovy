@@ -9,11 +9,11 @@ import net.sourceforge.jfacets.annotations.FacetKeyList
     @FacetKey(name="renderPropertiesEdit", profileId="guest", targetObjectType=Config.class),
     @FacetKey(name="renderPropertiesEdit", profileId="admin", targetObjectType=Config.class)
 ])
-class RenderPropertiesConfigImpl extends RenderPropertiesEditImpl {
+class RenderPropertiesEditConfigAll extends RenderPropertiesEditImpl {
 
     @Override
     List<String> getPropertyNames() {
-        ["baseDir", "username", "password"]
+        ["baseDir", "username", "password", "url"]
     }
 
 
