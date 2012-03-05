@@ -53,7 +53,7 @@ class RfsStore extends HibernateCompassStore {
 
     List<com.rvkb.rfs.model.File> getFiles() {
         return session.createCriteria(com.rvkb.rfs.model.File.class).
-            addOrder(Order.asc("path")).
+            addOrder(Order.desc("path")).
             list()
     }
 

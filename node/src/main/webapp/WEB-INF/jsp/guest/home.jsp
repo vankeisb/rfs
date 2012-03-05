@@ -13,6 +13,7 @@
         <script type="text/javascript">
             dojo.require("rfs.Transfers");
             dojo.require("rfs.Buddies");
+            dojo.require("rfs.Files");
         </script>
         <div class="row-fluid">
             <div class="span12">
@@ -51,16 +52,16 @@
                     </div>
                     <div class="span6">
                         <c:set var="files" value="${home.files}"/>
-                        <h2>Shared folder contents <small>${fn:length(files)} file(s)</small></h2>
+                        <h2>Shared folder contents <small><span id="nbFiles">${fn:length(files)}</span> file(s)</small></h2>
                         <c:choose>
                             <c:when test="${not empty files}">
-                                <ul id="files">
-                                    <c:forEach items="${home.files}" var="file">
-                                        <li>
-                                            <a href="${cp}/download/File${file.path}">${file.path}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
+                                <div widgetId="files" data-dojo-type="rfs.Files" data-dojo-props="baseUrl: '${cp}'"></div>
+                                <script type="text/javascript">
+                                    var files = dijit.byId("files");
+                                    dojo.connect(files, "onRefresh", function(files) {
+                                        dojo.byId("nbFiles").innerHTML = files ? files.length : 0;
+                                    });
+                                </script>
                             </c:when>
                             <c:otherwise>
                                 <p>

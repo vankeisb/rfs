@@ -61,3 +61,11 @@
 .transferRowInner.notStarted {
     background-image: url("lock.png");
 }
+
+.files ul {
+    margin: 0px;
+}
+
+.files ul li {
+    list-style-type: none;
+}
