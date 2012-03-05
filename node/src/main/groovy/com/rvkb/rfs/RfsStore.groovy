@@ -66,7 +66,7 @@ class RfsStore extends HibernateCompassStore {
     }
 
     List<FileTransfer> getLastDownloads() {
-        session.createCriteria(FileTransfer.class).setMaxResults(10).list()
+        session.createCriteria(FileTransfer.class).addOrder(Order.desc("finishedOn")).setMaxResults(10).list()
     }
 
 }
