@@ -20,18 +20,14 @@ class RfsHttpClient {
         this.httpclient = httpclient
     }
 
-    public HttpResponse get(HttpContext ctx, String url, Closure closure) {
+    public void get(HttpContext ctx, String url, Closure closure) {
         println "REQ : $url"
         HttpRequest req = new HttpGet(url)
-        HttpResponse resp = null
-        try {
+        if (ctx) {
+            httpclient.execute(req, closure as ResponseHandler, ctx)
+        } else {
             httpclient.execute(req, closure as ResponseHandler)
-        } finally {
-            if (resp) {
-                EntityUtils.consume(resp.entity)
-            }
         }
-        return resp
     }
 
     public String responseToString(HttpResponse response) {
@@ -57,6 +53,7 @@ class RfsHttpClient {
             if (resp?.statusLine?.statusCode==401) {
                 ctx = null
             }
+            EntityUtils.consume(resp.entity)
         }
         return ctx
     }

@@ -6,7 +6,6 @@ import woko.facets.BaseResolutionFacet
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.ActionBeanContext
 import com.rvkb.rfs.facets.FacetCategory
-import net.sourceforge.stripes.action.StreamingResolution
 import net.sourceforge.stripes.action.ErrorResolution
 import com.rvkb.rfs.util.DownloadResolution
 import com.rvkb.rfs.model.FileTransfer
@@ -27,7 +26,6 @@ class DownloadAdmin extends BaseResolutionFacet {
         }
         fullPath += path
         String fileName = path
-        int i = fileName.lastIndexOf("/")
         def localFile = new java.io.File(fullPath)
         if (!localFile.exists()) {
             // TODO cleanup ? file should not exist in the db...
@@ -45,9 +43,9 @@ class DownloadAdmin extends BaseResolutionFacet {
             }.
             onError { e ->
                 ft.finishedOn = new Date()
+                ft.error = true
+                ft.errorMsg = e.message
                 store.save(ft)
-                println "ERROR !"
-                e.printStackTrace()
             }
     }
 

@@ -1,0 +1,29 @@
+.folder {
+    padding-left: 16px;
+    margin-bottom: 10px;
+    background-image: url("folder.png");
+    background-position: left center;
+    background-repeat: no-repeat;
+}
+
+.buddies {
+    margin-bottom: 10px;
+}
+
+.buddyRow {
+    padding-left: 16px;
+    background-position: left center;
+    background-repeat: no-repeat;
+}
+
+.buddyRow.online {
+    background-image: url("online.png");
+}
+
+.buddyRow.offline {
+    background-image: url("offline.png");
+}
+
+.buddyRow.authFailed {
+    background-image: url("lock.png");
+}

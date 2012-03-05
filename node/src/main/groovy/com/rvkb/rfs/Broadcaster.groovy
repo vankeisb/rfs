@@ -9,11 +9,11 @@ import woko.hibernate.TxCallback
 import woko.hibernate.TxCallbackWithResult
 import com.rvkb.rfs.fileobserver.*
 import org.apache.http.HttpResponse
+import org.apache.http.util.EntityUtils
 
 class Broadcaster {
 
     final RfsStore store
-    RfsHttpClient cli = new RfsHttpClient(new DefaultHttpClient())
 
     Broadcaster(RfsStore store) {
         this.store = store
@@ -38,21 +38,28 @@ class Broadcaster {
             config = store.config
         } as TxCallback)
         Thread.start {
-            buddies.each { User b ->
 
-                log "Notifying buddy : $b.username"
+            RfsHttpClient cli = new RfsHttpClient(new DefaultHttpClient())
+            try {
+                buddies.each { User b ->
 
-                // .../created/babz/path/to/file
-                HttpContext c = cli.login(b.url, config.username, config.password)
-                if (c) {
-                    String url = "$b.url/$facetName?facet.path=${URLEncoder.encode(relativePath)}"
-                    println "Authenticated with buddy : $b.username : notifying url $url"
-                    cli.get(c, url) { HttpResponse resp ->
-                        println cli.responseToString(resp)
+                    log "Notifying buddy : $b.username"
+
+                    // .../created/babz/path/to/file
+                    HttpContext c = cli.login(b.url, config.username, config.password)
+                    if (c) {
+                        String url = "$b.url/$facetName?facet.path=${URLEncoder.encode(relativePath)}"
+                        println "Authenticated with buddy : $b.username : notifying url $url"
+                        cli.get(c, url) { HttpResponse resp ->
+                            println cli.responseToString(resp)
+                            EntityUtils.consume(resp.entity)
+                        }
+                    } else {
+                        println "Could not authenticate with buddy : $b.username"
                     }
-                } else {
-                    println "Could not authenticate with buddy : $b.username"
                 }
+            } finally {
+                cli.close()
             }
         }
 

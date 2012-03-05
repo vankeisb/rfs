@@ -26,4 +26,7 @@ class FileTransfer {
 
     Date finishedOn
 
+    boolean error
+    String errorMsg
+
 }

@@ -13,10 +13,8 @@ class LayoutImpl extends LayoutAll {
     }
 
     @Override
-    List<String> getJsIncludes() {
-        return [
-          "/js/dojo-1.6.1/"
-        ]
+    String getLayoutPath() {
+        "/WEB-INF/jsp/all/layout.jsp"
     }
 
 
