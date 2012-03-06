@@ -18,7 +18,7 @@ class Rfs {
     private final RfsStore store
     private final Broadcaster b
     private FileSystemObserver fileSystemObserver
-    private File baseDir
+    private java.io.File baseDir
     private final DownloadManager downloadManager
     private boolean stopped = true
 
@@ -28,11 +28,11 @@ class Rfs {
         downloadManager = new DownloadManager(store)
     }
 
-    File getBaseDir() {
+    java.io.File getBaseDir() {
         return baseDir
     }
 
-    public String relativePath(File f) {
+    public String relativePath(java.io.File f) {
         return relativePath(f.absolutePath)
     }
 
@@ -40,7 +40,7 @@ class Rfs {
         return absolute[baseDir.absolutePath.length()..-1]
     }
 
-    def initialize(File baseDir) {
+    def initialize(java.io.File baseDir) {
         this.baseDir = baseDir
         logger.info("initializing with base dir '$baseDir.absolutePath'")
         stop()
@@ -88,16 +88,17 @@ class Rfs {
         // start dns update daemon thread
         Thread.start {
             while(!stopped) {
-                try {
-                    Thread.sleep(10000)
-                } catch(Exception e) {
-                    // let go
-                }
                 Config config = store.doInTxWithResult({st,sess ->
                     return store.config
                 } as TxCallbackWithResult)
                 DnsClient dns = new DnsClient(config)
                 dns.updateMyIp()
+
+                try {
+                    Thread.sleep(30000)
+                } catch(Exception e) {
+                    // let go
+                }
             }
         }
     }

@@ -35,6 +35,14 @@
                         <a href="${u}">${u}</a>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="span2 leftAligned">
+                        Last updated
+                    </div>
+                    <div class="span6">
+                        <fmt:formatDate value="${home.lastUpdated}" type="both"/>
+                    </div>
+                </div>
             </div>
         </div>
     </s:layout-component>

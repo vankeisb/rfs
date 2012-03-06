@@ -25,5 +25,9 @@ class HomeUser extends HomeImpl {
         return currentUser?.username
     }
 
+    Date getLastUpdated() {
+        return currentUser?.lastUpdated
+    }
+
 
 }

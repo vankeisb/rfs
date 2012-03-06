@@ -24,6 +24,7 @@ class Update extends BaseResolutionFacet {
         DnsUser u = currentUser
         u.host = ip
         u.port = port
+        u.lastUpdated = new Date()
         HibernateStore s = facetContext.woko.objectStore
         s.save(u)
         return new StreamingResolution("text/plain", "http://$ip:$port")

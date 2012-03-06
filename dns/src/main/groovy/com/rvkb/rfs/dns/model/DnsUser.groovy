@@ -8,5 +8,6 @@ class DnsUser extends HbUser {
 
     String host
     String port
+    Date lastUpdated
 
 }
