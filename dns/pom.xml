@@ -73,7 +73,7 @@
     <!-- Build configuration -->
     <!--~~~~~~~~~~~~~~~~~~~~~-->
     <build>
-        <finalName>rfs-dns</finalName>
+        <finalName>dns</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

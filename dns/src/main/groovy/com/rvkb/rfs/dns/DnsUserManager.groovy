@@ -20,13 +20,15 @@ class DnsUserManager extends HibernateUserManager {
     @Override
     DatabaseUserManager createDefaultUsers() {
         super.createDefaultUsers()
-        def u = createUser("kakou", "kakou", ["user"])
-        u.url = "http://localhost:9999/rfs"
+        DnsUser u = createUser("kakou", "kakou", ["user"])
+        u.host = "localhost"
+        u.port = "9999"
         hibernateStore.doInTx({ st, sess ->
             hibernateStore.save(u)
         } as TxCallback)
         u = createUser("babz", "babz", ["user"])
-        u.url = "http://localhost:8080/rfs"
+        u.host = "localhost"
+        u.port = "8080"
         hibernateStore.doInTx({ st, sess ->
             hibernateStore.save(u)
         } as TxCallback)

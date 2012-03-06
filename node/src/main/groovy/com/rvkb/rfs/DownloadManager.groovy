@@ -11,8 +11,11 @@ import org.hibernate.Session
 import com.rvkb.rfs.util.RfsHttpClient
 import org.apache.http.protocol.HttpContext
 import org.apache.http.util.EntityUtils
+import woko.util.WLogger
 
 class DownloadManager {
+
+    private static final WLogger logger = WLogger.getLogger(DownloadManager.class)
 
     private final RfsStore store
 
@@ -33,6 +36,8 @@ class DownloadManager {
 
         Thread.start() {
 
+            logger.info "Attempting to download '$relativePath' from '$buddy.username'"
+
             RfsHttpClient cli = new RfsHttpClient(new DefaultHttpClient())
             try {
 
@@ -46,7 +51,7 @@ class DownloadManager {
                     new File(dir).mkdirs()
                 }
 
-                println "*** Downloading : $url to $targetFile"
+                logger.info "Downloading : $url to $targetFile"
 
                 FileTransfer d = store.doInTxWithResult({ st, session ->
                     FileTransfer ft = new FileTransfer(buddy: buddy, relativePath: relativePath, startedOn: new Date(), download: true)
@@ -54,7 +59,18 @@ class DownloadManager {
                     return ft
                 } as TxCallbackWithResult)
 
-                HttpContext ctx = cli.login(buddy.url, cfg.username, cfg.password)
+                HttpContext ctx = null
+                try {
+                    ctx = cli.login(buddy.url, cfg.username, cfg.password)
+                } catch(Exception e) {
+                    logger.error "Error while trying to download '$url' from '$buddy.username'", e
+                    d.error = true
+                    d.finishedOn = new Date()
+                    d.errorMsg = e.message
+                    store.doInTx({ st, Session session ->
+                        store.save(d)
+                    } as TxCallback)
+                }
                 if (ctx) {
                     try {
                         cli.get(ctx, url) { HttpResponse resp ->
@@ -71,6 +87,7 @@ class DownloadManager {
                             }
                         }
                     } catch(Exception e) {
+                        logger.error "Error while trying to download '$url' from '$buddy.username'", e
                         d.error = true
                         d.finishedOn = new Date()
                         d.errorMsg = e.message
@@ -87,6 +104,7 @@ class DownloadManager {
                         } as TxCallback)
                     }
                 } else {
+                    logger.error "Authentication failed trying to download '$url' from '$buddy.username'"
                     d.error = true
                     d.finishedOn = new Date()
                     d.errorMsg = "Authentication failure"

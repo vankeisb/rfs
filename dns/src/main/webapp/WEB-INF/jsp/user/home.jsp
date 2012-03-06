@@ -35,7 +35,6 @@
                         <a href="${u}">${u}</a>
                     </div>
                 </div>
-                </p>
             </div>
         </div>
     </s:layout-component>

@@ -17,7 +17,8 @@ class HomeUser extends HomeImpl {
     }
 
     String getUserUrl() {
-        return currentUser?.url
+        def u = currentUser
+        return "http://$u.host:$u.port"
     }
 
     String getUsername() {

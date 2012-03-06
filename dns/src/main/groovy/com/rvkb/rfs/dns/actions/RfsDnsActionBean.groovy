@@ -28,7 +28,7 @@ class RfsDnsActionBean implements ActionBean {
             uniqueResult()
         String text
         if (u) {
-            text = u.url
+            text = "http://$u.host:$u.port"
         } else {
             text = "No such user"
             context.response.setStatus(404)

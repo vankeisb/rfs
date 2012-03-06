@@ -8,6 +8,8 @@ import com.rvkb.rfs.fileobserver.FsEvent
 import com.rvkb.rfs.fileobserver.FsEventInit
 import com.rvkb.rfs.fileobserver.FileSystemObserver
 import woko.util.WLogger
+import com.rvkb.rfs.model.Config
+import woko.hibernate.TxCallbackWithResult
 
 class Rfs {
 
@@ -18,6 +20,7 @@ class Rfs {
     private FileSystemObserver fileSystemObserver
     private File baseDir
     private final DownloadManager downloadManager
+    private boolean stopped = true
 
     Rfs(RfsStore store) {
         this.store = store
@@ -45,7 +48,7 @@ class Rfs {
             store.removeAllFiles()
         } as TxCallback)
 
-        // init phase
+        // init and start fs observer
         logger.info("Creating new observer")
         fileSystemObserver = new FileSystemObserver([baseDir]).
             addCallback { FsEvent e ->
@@ -80,6 +83,23 @@ class Rfs {
             }.
             init().
             start()
+
+        stopped = false
+        // start dns update daemon thread
+        Thread.start {
+            while(!stopped) {
+                try {
+                    Thread.sleep(10000)
+                } catch(Exception e) {
+                    // let go
+                }
+                Config config = store.doInTxWithResult({st,sess ->
+                    return store.config
+                } as TxCallbackWithResult)
+                DnsClient dns = new DnsClient(config)
+                dns.updateMyIp()
+            }
+        }
     }
 
     def stop() {
@@ -87,6 +107,7 @@ class Rfs {
         fileSystemObserver?.stop()
         logger.info("Stopping download manager...")
         downloadManager?.stop()
+        stopped = true
     }
 
     DownloadManager getDownloadManager() {

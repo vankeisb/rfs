@@ -13,7 +13,7 @@ class RenderPropertiesEditConfigAll extends RenderPropertiesEditImpl {
 
     @Override
     List<String> getPropertyNames() {
-        ["baseDir", "username", "password", "dns"]
+        ["baseDir", "port", "username", "password", "dns"]
     }
 
 

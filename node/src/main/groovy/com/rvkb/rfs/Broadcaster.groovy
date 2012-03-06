@@ -10,8 +10,11 @@ import woko.hibernate.TxCallbackWithResult
 import com.rvkb.rfs.fileobserver.*
 import org.apache.http.HttpResponse
 import org.apache.http.util.EntityUtils
+import woko.util.WLogger
 
 class Broadcaster {
+
+    private static final WLogger logger = WLogger.getLogger(Broadcaster.class)
 
     final RfsStore store
 
@@ -19,17 +22,14 @@ class Broadcaster {
         this.store = store
     }
 
-    def log(msg) {
-        println "*** $msg"
-    }
-
     def broadcast(FsEventInit e) {
-        log(e)
+        // TODO
+        logger.warn("Init event not yet implemented !!!")
     }
 
     private def doBroadcast(String facetName, FsEvent e, String relativePath) {
 
-        log "File event received, broadcasting ($e)"
+        logger.info "File event received, broadcasting ($e)"
 
         def buddies
         Config config
@@ -43,19 +43,20 @@ class Broadcaster {
             try {
                 buddies.each { User b ->
 
-                    log "Notifying buddy : $b.username"
+                    logger.info "Notifying buddy : $b.username"
 
-                    // .../created/babz/path/to/file
-                    HttpContext c = cli.login(b.url, config.username, config.password)
+                    DnsClient dns = new DnsClient(config)
+                    String buddyUrl = dns.getUrl(b)
+
+                    HttpContext c = cli.login(buddyUrl, config.username, config.password)
                     if (c) {
-                        String url = "$b.url/$facetName?facet.path=${URLEncoder.encode(relativePath)}"
-                        println "Authenticated with buddy : $b.username : notifying url $url"
+                        String url = "$buddyUrl/$facetName?facet.path=${URLEncoder.encode(relativePath)}"
+                        logger.info "Authenticated with buddy : $b.username : notifying url $url"
                         cli.get(c, url) { HttpResponse resp ->
-                            println cli.responseToString(resp)
                             EntityUtils.consume(resp.entity)
                         }
                     } else {
-                        println "Could not authenticate with buddy : $b.username"
+                        logger.warn "Could not authenticate with buddy : $b.username (event=$e)"
                     }
                 }
             } finally {
@@ -78,10 +79,6 @@ class Broadcaster {
             store.config
         } as TxCallbackWithResult)
         doBroadcast("deleted", e, e.getRelativePath(config.baseDir))
-    }
-
-    void close() {
-        cli?.close()
     }
 
 }

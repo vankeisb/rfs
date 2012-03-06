@@ -6,6 +6,7 @@ import woko.ext.usermanagement.hibernate.HbUser
 @Entity
 class DnsUser extends HbUser {
 
-    String url
+    String host
+    String port
 
 }
